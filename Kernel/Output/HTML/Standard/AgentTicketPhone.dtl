@@ -1,0 +1,406 @@
+# --
+# AgentTicketPhone.dtl - provides HTML form for phone
+# Copyright (C) 2001-2012 OTRS AG, http://otrs.org/
+# --
+# $Id: AgentTicketPhone.dtl,v 1.127.2.3 2012/05/25 13:32:22 mg Exp $
+# --
+# This software comes with ABSOLUTELY NO WARRANTY. For details, see
+# the enclosed file COPYING for license information (AGPL). If you
+# did not receive this file, see http://www.gnu.org/licenses/agpl.txt.
+# --
+
+$Include{"AgentCustomerSearch"}
+<div class="MainBox ARIARoleMain">
+
+    <h1>$Text{"Create New Phone Ticket"}</h1>
+
+    <div class="LayoutFixedSidebar SidebarLast">
+<!-- dtl:block:CustomerTable -->
+        <div id="CustomerInfo" class="SidebarColumn WidgetSimple">
+            <div class="Header">
+                <h2>$Text{"Customer Information"}</h2>
+            </div>
+            <div class="Content">
+                $Data{"CustomerTable"}
+            </div>
+        </div>
+<!-- dtl:block:CustomerTable -->
+
+        <div class="ContentColumn">
+            <form action="$Env{"CGIHandle"}" method="post" enctype="multipart/form-data" name="compose" id="NewPhoneTicket" class="Validate PreventMultipleSubmits">
+                <input type="hidden" name="Action" value="$Env{"Action"}"/>
+                <input type="hidden" name="Subaction" value="StoreNew"/>
+                <input type="hidden" name="FormID" value="$QData{"FormID"}"/>
+                <input type="hidden" name="ExpandCustomerName" id="ExpandCustomerName" value="0"/>
+                <input type="hidden" name="OwnerAll" id="OwnerAll" value="$QData{"OwnerAll"}"/>
+                <input type="hidden" name="ResponsibleAll" id="ResponsibleAll" value="$QData{"ResponsibleAll"}"/>
+                <input type="hidden" name="PreSelectedCustomerUser" id="PreSelectedCustomerUser" value=""/>
+                <input type="hidden" name="SelectedCustomerUser" id="SelectedCustomerUser" value="$QData{"CustomerUser"}"/>
+                <input type="hidden" name="TicketID" value="$QData{"TicketID"}"/>
+                <input type="hidden" name="LinkTicketID" value="$QData{"LinkTicketID"}"/>
+
+                <fieldset class="TableLike">
+
+# example template for customizations, see hidden form at the end of the file
+#                    <label>$Text{"Templates"}:</label>
+#                    <div class="Field">
+#                        <button type="button" onclick="$('#Template1').submit()" value="$Text{"Example Template"}">$Text{"Example Template"}</button>
+#                    </div>
+#                    <div class="Clear"></div>
+<!-- dtl:block:TicketType -->
+                    <label class="Mandatory" for="TypeID"><span class="Marker">*</span> $Text{"Type"}:</label>
+                    <div class="Field">
+                        $Data{"TypeStrg"}
+                        <div id="TypeIDError" class="TooltipErrorMessage"><p>$Text{"This field is required."}</p></div>
+                        <div id="TypeIDServerError" class="TooltipErrorMessage"><p>$Text{"This field is required."}</p></div>
+<!--dtl:js_on_document_complete-->
+<script type="text/javascript">//<![CDATA[
+    $('#TypeID').bind('change', function (Event) {
+        Core.AJAX.FormUpdate($('#NewPhoneTicket'), 'AJAXUpdate', 'TypeID', ['NewUserID', 'NewResponsibleID', 'NextStateID', 'PriorityID', 'ServiceID', 'SLAID', 'SignKeyID', 'CryptKeyID', 'TicketFreeText1', 'TicketFreeText2', 'TicketFreeText3', 'TicketFreeText4', 'TicketFreeText5', 'TicketFreeText6', 'TicketFreeText7', 'TicketFreeText8', 'TicketFreeText9', 'TicketFreeText10', 'TicketFreeText11', 'TicketFreeText12', 'TicketFreeText13', 'TicketFreeText14', 'TicketFreeText15', 'TicketFreeText16', 'To', 'Cc', 'Bcc']);
+    });
+//]]></script>
+<!--dtl:js_on_document_complete-->
+                    </div>
+                    <div class="Clear"></div>
+<!-- dtl:block:TicketType -->
+
+                    <label class="Mandatory" for="CustomerAutoComplete"><span class="Marker">*</span> $Text{"From customer"}:</label>
+                    <div class="Field">
+
+                        <input id="CustomerAutoComplete" type="text" name="From" value="$QData{"From"}" class="W75pc AutocompleteOff Validate_Required $QData{"FromInvalid"}"/>
+                        <div id="CustomerAutoCompleteError" class="TooltipErrorMessage">
+                            <p>$Text{"This field is required."}</p>
+                        </div>
+                        <div id="CustomerAutoCompleteServerError" class="TooltipErrorMessage">
+<!-- dtl:block:GenericServerErrorMsg -->
+                            <p>$Text{"This field is required."}</p>
+<!-- dtl:block:GenericServerErrorMsg -->
+<!-- dtl:block:EmailInvalidConfigServerErrorMsg -->
+                            <p>$Text{"This email address is not allowed due to the system configuration."}</p>
+<!-- dtl:block:EmailInvalidConfigServerErrorMsg -->
+<!-- dtl:block:EmailInvalidMXServerErrorMsg -->
+                            <p>$Text{"This email address failed MX check."}</p>
+<!-- dtl:block:EmailInvalidMXServerErrorMsg -->
+<!-- dtl:block:EmailInvalidDNSServerErrorMsg -->
+                            <p>$Text{"DNS problem, please check your configuration and the error log."}</p>
+<!-- dtl:block:EmailInvalidDNSServerErrorMsg -->
+<!-- dtl:block:EmailInvalidSyntaxServerErrorMsg -->
+                            <p>$Text{"The syntax of this email address is incorrect."}</p>
+<!-- dtl:block:EmailInvalidSyntaxServerErrorMsg -->
+                        </div>
+                    </div>
+                    <div class="Clear"></div>
+
+                    <label class="Mandatory" for="Dest"><span class="Marker">*</span> $Text{"To queue"}:</label>
+                    <div class="Field">
+                        $Data{"ToStrg"}
+                        <div id="DestError" class="TooltipErrorMessage" ><p>$Text{"This field is required."}</p></div>
+                        <div id="DestServerError" class="TooltipErrorMessage"><p>$Text{"This field is required."}</p></div>
+<!--dtl:js_on_document_complete-->
+<script type="text/javascript">//<![CDATA[
+    $('#Dest').bind('change', function (Event) {
+        Core.AJAX.FormUpdate($('#NewPhoneTicket'), 'AJAXUpdate', 'Dest', ['NewUserID', 'NewResponsibleID', 'NextStateID', 'PriorityID', 'ServiceID', 'SLAID', 'SignKeyID', 'CryptKeyID', 'TicketFreeText1', 'TicketFreeText2', 'TicketFreeText3', 'TicketFreeText4', 'TicketFreeText5', 'TicketFreeText6', 'TicketFreeText7', 'TicketFreeText8', 'TicketFreeText9', 'TicketFreeText10', 'TicketFreeText11', 'TicketFreeText12', 'TicketFreeText13', 'TicketFreeText14', 'TicketFreeText15', 'TicketFreeText16', 'To', 'Cc', 'Bcc']);
+    });
+//]]></script>
+<!--dtl:js_on_document_complete-->
+                    </div>
+                    <div class="Clear"></div>
+
+<!-- dtl:block:TicketService -->
+                    <label for="ServiceID">$Text{"Service"}:</label>
+                    <div class="Field">
+                        $Data{"ServiceStrg"}
+                        <div id="ServiceIDServerError" class="TooltipErrorMessage"><p>$Text{"Service invalid."}</p></div>
+<!--dtl:js_on_document_complete-->
+<script type="text/javascript">//<![CDATA[
+    $('#ServiceID').bind('change', function (Event) {
+        Core.AJAX.FormUpdate($('#NewPhoneTicket'), 'AJAXUpdate', 'ServiceID', ['NewUserID', 'NewResponsibleID', 'NextStateID', 'PriorityID', 'SLAID', 'SignKeyID', 'CryptKeyID', 'TicketFreeText1', 'TicketFreeText2', 'TicketFreeText3', 'TicketFreeText4', 'TicketFreeText5', 'TicketFreeText6', 'TicketFreeText7', 'TicketFreeText8', 'TicketFreeText9', 'TicketFreeText10', 'TicketFreeText11', 'TicketFreeText12', 'TicketFreeText13', 'TicketFreeText14', 'TicketFreeText15', 'TicketFreeText16', 'To', 'Cc', 'Bcc']);
+    });
+//]]></script>
+<!--dtl:js_on_document_complete-->
+                    </div>
+                    <div class="Clear"></div>
+<!-- dtl:block:TicketService -->
+
+<!-- dtl:block:TicketSLA -->
+                    <label for="SLAID">$Text{"Service Level Agreement"}:</label>
+                    <div class="Field">
+                        $Data{"SLAStrg"}
+<!--dtl:js_on_document_complete-->
+<script type="text/javascript">//<![CDATA[
+    $('#SLAID').bind('change', function (Event) {
+        Core.AJAX.FormUpdate($('#NewPhoneTicket'), 'AJAXUpdate', 'SLAID', ['NewUserID', 'NewResponsibleID', 'NextStateID', 'PriorityID', 'SignKeyID', 'CryptKeyID', 'TicketFreeText1', 'TicketFreeText2', 'TicketFreeText3', 'TicketFreeText4', 'TicketFreeText5', 'TicketFreeText6', 'TicketFreeText7', 'TicketFreeText8', 'TicketFreeText9', 'TicketFreeText10', 'TicketFreeText11', 'TicketFreeText12', 'TicketFreeText13', 'TicketFreeText14', 'TicketFreeText15', 'TicketFreeText16', 'To', 'Cc', 'Bcc']);
+    });
+//]]></script>
+<!--dtl:js_on_document_complete-->
+                    </div>
+                    <div class="Clear"></div>
+<!-- dtl:block:TicketSLA -->
+
+<!-- dtl:block:OwnerSelection -->
+                    <label for="NewUserID">$Text{"Owner"}:</label>
+                    <div class="Field">
+                        $Data{"OptionStrg"}
+                        <a href="#" id="OwnerSelectionGetAll" class="GetAllAJAX" title="$Text{"Get all"}">$Text{"Get all"}</a>
+<!--dtl:js_on_document_complete-->
+<script type="text/javascript">//<![CDATA[
+    $('#OwnerSelectionGetAll').bind('click', function (Event) {
+        $('#OwnerAll').val('1'); // Needed? Why?
+        Core.AJAX.FormUpdate($('#NewPhoneTicket'), 'AJAXUpdate', 'OwnerAll', ['NewUserID'], function() {
+            $('#NewUserID').focus();
+        });
+        return false;
+    });
+//]]></script>
+<!--dtl:js_on_document_complete-->
+                    </div>
+                    <div class="Clear"></div>
+<!-- dtl:block:OwnerSelection -->
+
+<!-- dtl:block:ResponsibleSelection -->
+                    <label for="NewResponsibleID">$Text{"Responsible"}:</label>
+                    <div class="Field">
+                        $Data{"ResponsibleOptionStrg"}
+                        <a href="#" id="ResponsibleSelectionGetAll" class="GetAllAJAX" title="$Text{"Get all"}">$Text{"Get all"}</a>
+<!--dtl:js_on_document_complete-->
+<script type="text/javascript">//<![CDATA[
+    $('#ResponsibleSelectionGetAll').bind('click', function (Event) {
+        $('#ResponsibleAll').val('1'); // Needed? Why?
+        Core.AJAX.FormUpdate($('#NewPhoneTicket'), 'AJAXUpdate', 'ResponsibleAll', ['NewResponsibleID'], function() {
+            $('#NewResponsibleID').focus();
+        });
+        return false;
+    });
+//]]></script>
+<!--dtl:js_on_document_complete-->
+                    </div>
+                    <div class="Clear"></div>
+<!-- dtl:block:ResponsibleSelection -->
+
+                    <label class="Mandatory" for="Subject"><span class="Marker">*</span> $Text{"Subject"}:</label>
+                    <div class="Field">
+                        <input class="W75pc Validate_Required $QData{"SubjectInvalid"}" type="text" name="Subject" id="Subject" value="$QData{"Subject"}"/>
+                        <div id="SubjectError" class="TooltipErrorMessage">
+                            <p>$Text{"This field is required."}</p>
+                        </div>
+                        <div id="SubjectServerError" class="TooltipErrorMessage">
+                            <p>$Text{"This field is required."}</p>
+                        </div>
+                    </div>
+                    <div class="Clear"></div>
+
+<!-- dtl:block:TicketOptions -->
+                    <label>$Text{"Options"}:</label>
+                    <div class="Field">
+
+<!-- OutputFilterHook_TicketOptionsBegin -->
+
+<!-- dtl:block:SpellCheck -->
+                        <a href="#" id="OptionSpellCheck">[ $Text{"Spell check"} ]</a>
+<!-- dtl:block:SpellCheck -->
+
+<!-- dtl:block:OptionCustomer -->
+                        <a href="#" id="OptionCustomer">[ $Text{"Customer"} ]</a>
+<!-- dtl:block:OptionCustomer -->
+
+<!-- OutputFilterHook_TicketOptionsEnd -->
+
+                    </div>
+                    <div class="Clear"></div>
+<!-- dtl:block:TicketOptions -->
+
+<!-- OutputFilterHook_NoTicketOptionsFallback -->
+
+                    <label class="Mandatory" for="RichText"><span class="Marker">*</span> $Text{"Text"}:</label>
+                    <div class="RichTextField">
+
+<!-- dtl:block:RichText -->
+$Include{"RichTextEditor"}
+<!-- dtl:block:RichText -->
+                        <textarea id="RichText" class="RichText Validate_Required $QData{"RichTextInvalid"}" name="Body" title="Message body" rows="15" cols="$Config{"Ticket::Frontend::TextAreaNote"}">$QData{"Body"}</textarea>
+                        <div id="RichTextError" class="TooltipErrorMessage">
+                            <p>$Text{"This field is required."}</p>
+                        </div>
+                        <div id="RichTextServerError" class="TooltipErrorMessage">
+                            <p>$Text{"This field is required."}</p>
+                        </div>
+                    </div>
+                    <div class="Clear"></div>
+
+                    <label>$Text{"Attachment"}:</label>
+                    <div class="Field">
+                        <ul>
+<!-- dtl:block:Attachment -->
+                            <li>
+                                $QData{"Filename"} ($QData{"Filesize"})
+                                <button type="button" id="AttachmentDeleteButton$QData{"FileID"}" name="AttachmentDeleteButton$QData{"FileID"}" value="$Text{"Delete"}" class="SpacingLeft">$Text{"Delete"}</button>
+                                <input type="hidden" id="AttachmentDelete$QData{"FileID"}" name="AttachmentDelete$QData{"FileID"}" />
+<!--dtl:js_on_document_complete-->
+<script type="text/javascript">//<![CDATA[
+    $('#AttachmentDeleteButton$QData{"FileID"}').bind('click', function () {
+        var $Form = $('#AttachmentDeleteButton$QData{"FileID"}').closest('form');
+        $('#AttachmentDelete$QData{"FileID"}').val(1);
+        Core.Form.Validate.DisableValidation($Form);
+        $Form.trigger('submit');
+    });
+//]]></script>
+<!--dtl:js_on_document_complete-->
+                            </li>
+<!-- dtl:block:Attachment -->
+                            <li>
+                                <input id="FileUpload" name="FileUpload" type="file" size="40" />
+                                <input type="hidden" id="AttachmentUpload" name="AttachmentUpload" value="0" />
+                            </li>
+                        </ul>
+<!--dtl:js_on_document_complete-->
+<script type="text/javascript">//<![CDATA[
+    $('#FileUpload').bind('change', function () {
+        var $Form = $('#FileUpload').closest('form');
+        Core.Form.Validate.DisableValidation($Form);
+        $Form.find('#AttachmentUpload').val('1').end().submit();
+    });
+//]]></script>
+<!--dtl:js_on_document_complete-->
+                    </div>
+                    <div class="Clear"></div>
+
+                    <label for="CustomerID">$Text{"CustomerID"}:</label>
+                    <div class="Field">
+                        <input type="text" name="CustomerID" id="CustomerID" value="$QData{"CustomerID"}" class="W50pc"/>
+                    </div>
+                    <div class="Clear"></div>
+
+                    <label for="NextStateID">$Text{"Next ticket state"}:</label>
+                    <div class="Field">
+                        $Data{"NextStatesStrg"}
+                    </div>
+                    <div class="Clear"></div>
+
+                    <label>$Text{"Pending Date"} ($Text{"for pending* states"}):</label>
+                    <div class="Field">
+                        $Data{"PendingDateString"}
+                        <div id="DayError" class="TooltipErrorMessage"><p>$Text{"Date invalid!"}</p></div>
+                        <div id="HourError" class="TooltipErrorMessage"><p>$Text{"Date invalid!"}</p></div>
+                    </div>
+                    <div class="Clear"></div>
+
+                    <label for="PriorityID">$Text{"Priority"}:</label>
+                    <div class="Field">
+                        $Data{"PriorityStrg"}
+                    </div>
+                    <div class="Clear"></div>
+
+<!-- dtl:block:TicketFreeText -->
+                    $Data{"TicketFreeKeyField"}
+                    <div class="Field">
+                        $Data{"TicketFreeTextField"}
+                    </div>
+                    <div class="Clear"></div>
+<!-- dtl:block:TicketFreeText -->
+
+# example of how to use fixed ticket freetext blocks for customizations
+#<!-- dtl:block:TicketFreeText1 -->
+#                    $Data{"TicketFreeKeyField1"}
+#                    <div class="Field">
+#                        $Data{"TicketFreeTextField1"}
+#                    </div>
+#                    <div class="Clear"></div>
+#<!-- dtl:block:TicketFreeText1 -->
+#<!-- dtl:block:TicketFreeText2 -->
+#                    $Data{"TicketFreeKeyField2"}
+#                    <div class="Field">
+#                        $Data{"TicketFreeTextField2"}
+#                    </div>
+#                    <div class="Clear"></div>
+#<!-- dtl:block:TicketFreeText2 -->
+
+<!-- dtl:block:TicketFreeTime -->
+                    $Data{"TicketFreeTimeKey"}
+                    <div class="Field">
+                        $Data{"TicketFreeTime"}
+                        <div id="TicketFreeTime$Data{"Count"}UsedError" class="TooltipErrorMessage"><p>$Text{"This field is required."}</p></div>
+                    </div>
+                    <div class="Clear"></div>
+<!-- dtl:block:TicketFreeTime -->
+
+# example of how to use fixed ticket freetime blocks for customizations
+#<!-- dtl:block:TicketFreeTime1 -->
+#                        <label>$Data{"TicketFreeTimeKey1"}:</label>
+#                        <div class="Field">
+#                            $Data{"TicketFreeTime1"}
+#                        </div>
+#                        <div class="Clear"></div>
+#<!-- dtl:block:TicketFreeTime1 -->
+#<!-- dtl:block:TicketFreeTime2 -->
+#                        <label>$Data{"TicketFreeTimeKey2"}:</label>
+#                        <div class="Field">
+#                            $Data{"TicketFreeTime2"}
+#                        </div>
+#                        <div class="Clear"></div>
+#<!-- dtl:block:TicketFreeTime2 -->
+
+<!-- dtl:block:ArticleFreeText -->
+                    $Data{"ArticleFreeKeyField"}
+                    <div class="Field">
+                        $Data{"ArticleFreeTextField"}
+                    </div>
+                    <div class="Clear"></div>
+<!-- dtl:block:ArticleFreeText -->
+
+# example of how to use fixed article freetext blocks for customizations
+#<!-- dtl:block:ArticleFreeText1 -->
+#                        <label>$Data{"ArticleFreeKeyField1"}:</label>
+#                        <div class="Field">
+#                            $Data{"ArticleFreeKeyField1"}
+#                        </div>
+#                        <div class="Clear"></div>
+#<!-- dtl:block:ArticleFreeText1 -->
+#<!-- dtl:block:ArticleFreeText2 -->
+#                        <label>$Data{"ArticleFreeKeyField2"}:</label>
+#                        <div class="Field">
+#                            $Data{"ArticleFreeTextField2"}
+#                        </div>
+#                        <div class="Clear"></div>
+#<!-- dtl:block:ArticleFreeText2 -->
+
+<!-- dtl:block:TimeUnitsLabel -->
+                    <label for="TimeUnits">$Text{"Time units"}$Text{"$Config{"Ticket::Frontend::TimeUnits"}"}:</label>
+<!-- dtl:block:TimeUnitsLabel -->
+<!-- dtl:block:TimeUnitsLabelMandatory -->
+                    <label class="Mandatory" for="TimeUnits"><span class="Marker">*</span> $Text{"Time units"}$Text{"$Config{"Ticket::Frontend::TimeUnits"}"}:</label>
+<!-- dtl:block:TimeUnitsLabelMandatory -->
+<!-- dtl:block:TimeUnits -->
+                    <div class="Field">
+                        <input type="text" class="W25pc Validate_TimeUnits $QData{"TimeUnitsRequired"} $QData{"TimeUnitsInvalid"}" name="TimeUnits" id="TimeUnits" value="$QData{"TimeUnits"}" />
+                        <div id="TimeUnitsError" class="TooltipErrorMessage"><p>$Text{"Invalid time!"}</p></div>
+                        <div id="TimeUnitsServerError" class="TooltipErrorMessage"><p>$Text{"This field is required."}</p></div>
+                    </div>
+                    <div class="Clear"></div>
+<!-- dtl:block:TimeUnits -->
+                    <div class="Field SpacingTop">
+                        <button class="Primary" id="submitRichText" accesskey="g" title="$Text{"Create"} (g)" type="submit" value="$Text{"Create"}">$Text{"Create"}</button>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+    <div id="CustomerTickets"></div>
+</div>
+
+<!--dtl:js_on_document_complete-->
+<script type="text/javascript">//<![CDATA[
+    Core.Agent.TicketAction.Init();
+//]]></script>
+<!--dtl:js_on_document_complete-->
+
+# example template form for customizations
+#<form action="$Env{"CGIHandle"}" method="post" enctype="multipart/form-data" id="Template1">
+#    <input type="hidden" name="Action" value="$Env{"Action"}"/>
+#    <input type="hidden" name="Subaction" value="StoreNew"/>
+#    <input type="hidden" name="FormID" value="$QData{"FormID"}"/>
+#    <input type="hidden" name="ExpandCustomerName" value="2"/>
+#    <input type="hidden" name="Subject" value="Example Subject"/>
+#    <input type="hidden" name="Body" value="Name:
+#Product:
+#Comment:"/>
+#</form>

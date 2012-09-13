@@ -1,0 +1,194 @@
+# --
+# AdminSMIME.dtl - provides HTML form for AdminSMIME html
+# Copyright (C) 2001-2011 OTRS AG, http://otrs.org/
+# --
+# $Id: AdminSMIME.dtl,v 1.20.2.3 2011/05/10 18:11:28 dz Exp $
+# --
+# This software comes with ABSOLUTELY NO WARRANTY. For details, see
+# the enclosed file COPYING for license information (AGPL). If you
+# did not receive this file, see http://www.gnu.org/licenses/agpl.txt.
+# --
+
+<div class="MainBox ARIARoleMain LayoutFixedSidebar SidebarFirst">
+    <h1>$Text{"S/MIME Management"}</h1>
+    <div class="SidebarColumn">
+
+<!-- dtl:block:ActionList -->
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>$Text{"Actions"}</h2>
+            </div>
+            <div class="Content">
+                <ul class="ActionList">
+<!-- dtl:block:ActionAdd -->
+                    <li>
+                        <a class="CallForAction Plus" href="$Env{"Baselink"}Action=$Env{"Action"};Subaction=ShowAddCertificate"><span>$Text{"Add certificate"}</span></a>
+                    </li>
+                    <li>
+                        <a class="CallForAction Plus" href="$Env{"Baselink"}Action=$Env{"Action"};Subaction=ShowAddPrivate"><span>$Text{"Add private key"}</span></a>
+                    </li>
+<!-- dtl:block:ActionAdd -->
+<!-- dtl:block:ActionOverview -->
+                    <li>
+                        <a href="$Env{"Baselink"}Action=$Env{"Action"}" class="CallForAction"><span>$Text{"Go to overview"}</span></a>
+                    </li>
+<!-- dtl:block:ActionOverview -->
+                </ul>
+            </div>
+        </div>
+
+<!-- dtl:block:ActionList -->
+
+<!-- dtl:block:SMIMEFilter -->
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2><label for="FilterSMIME">$Text{"Filter for certificates"}</label></h2>
+            </div>
+            <div class="Content">
+                <ul>
+                    <li>
+                        <form action="">
+                            <fieldset>
+                                <input type="text" id="FilterSMIME" class="W50pc" name="FilterSMIME" value="" title="$Text{"Filter for SMIME certs"}" />
+                            </fieldset>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+<!-- dtl:js_on_document_complete -->
+<script type="text/javascript">//<![CDATA[
+    Core.UI.Table.InitTableFilter($('#FilterSMIME'), $('#SMIME'));
+//]]></script>
+<!-- dtl:js_on_document_complete -->
+
+<!-- dtl:block:SMIMEFilter -->
+
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>$Text{"Hint"}</h2>
+            </div>
+            <div class="Content">
+                <p class="FieldExplanation">
+                    $Text{"In this way you can directly edit the certification and private keys in file system."}
+                </p>
+                <p class="FieldExplanation">
+                    $Text{"See also"}: <a href="http://en.wikipedia.org/wiki/S/MIME" target="_blank">http://en.wikipedia.org/wiki/S/MIME</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="ContentColumn">
+        <div class="WidgetSimple">
+<!-- dtl:block:OverviewResult -->
+            <div class="Header">
+                <h2>$Text{"Results"}</h2>
+            </div>
+            <div class="Content ">
+                <table class="DataTable" id="SMIME">
+                    <thead>
+                        <tr>
+                            <th>$Text{"Type"}</th>
+                            <th>$Text{"Subject"}</th>
+                            <th>$Text{"Hash"}</th>
+                            <th>$Text{"Fingerprint"}</th>
+                            <th>$Text{"Create"}</th>
+                            <th>$Text{"Expires"}</th>
+                            <th>$Text{"Delete"}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="FilterMessage Hidden">
+                            <td colspan="7">$Text{"No matches found."}</td>
+                        </tr>
+<!-- dtl:block:NoDataFoundMsg -->
+                        <tr>
+                            <td colspan="7">$Text{"No data found."}</td>
+                        </tr>
+<!-- dtl:block:NoDataFoundMsg -->
+<!-- dtl:block:Row -->
+                        <tr>
+                            <td>$QData{"Type"}</td>
+                            <td>$QData{"Subject"}</td>
+                            <td>
+                                <a class="AsBlock" href="$Env{"Baselink"}Action=$Env{"Action"};Subaction=Download;Type=$LQData{"Type"};Hash=$LQData{"Hash"}" title="$QData{"Hash"}">$QData{"Hash","12"}</a>
+                            </td>
+                            <td>
+                                <a class="AsBlock" href="$Env{"Baselink"}Action=$Env{"Action"};Subaction=DownloadFingerprint;Type=$LQData{"Type"};Hash=$LQData{"Hash"}" title="$QData{"Fingerprint"}">$QData{"Fingerprint","12"}</a>
+                            </td>
+                            <td>$QData{"ShortStartDate"}</td>
+                            <td>$QData{"ShortEndDate"}</td>
+                            <td class="Center">
+                                <a class="TrashCan" href="$Env{"Baselink"}Action=$Env{"Action"};Subaction=Delete;Type=$LQData{"Type"};Hash=$LQData{"Hash"}" title="$Text{"Delete this certificate"}">$Text{"Delete this certificate"}</a>
+                            </td>
+                        </tr>
+<!-- dtl:block:Row -->
+                    </tbody>
+                </table>
+            </div>
+<!-- dtl:block:OverviewResult -->
+<!-- dtl:block:OverviewAddCertificate -->
+            <div class="Header">
+                <h2>$Text{"Add Certificate"}</h2>
+            </div>
+            <div class="Content">
+                <form action="$Env{"CGIHandle"}" method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="Action" value="$Env{"Action"}"/>
+                    <input type="hidden" name="Subaction" value="AddCertificate"/>
+                    <fieldset class="TableLike">
+                        <label class="Mandatory" for="File"><span class="Marker">*</span> $Text{"File"}:</label>
+                        <div class="Field">
+                            <input type="file" size="10" name="FileUpload" id="FileUpload" class="Validate_Required $QData{"FileUploadInvalid"}"/>
+                            <div id="FileUploadError" class="TooltipErrorMessage"><p>$Text{"This field is required."}</p></div>
+                            <div id="FileUploadServerError" class="TooltipErrorMessage"><p>$Text{"This field is required."}</p></div>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <div class="Field SpacingTop">
+                            <button class="Primary" type="submit">$Text{"Add"}</button>
+                            $Text{"or"}
+                            <a href="$Env{"Baselink"}Action=$Env{"Action"}">$Text{"Cancel"}</a>
+                        </div>
+                        <div class="Clear"></div>
+                    </fieldset>
+                </form>
+            </div>
+<!-- dtl:block:OverviewAddCertificate -->
+<!-- dtl:block:OverviewAddPrivate -->
+            <div class="Header">
+                <h2>$Text{"Add Private Key"}</h2>
+            </div>
+            <div class="Content">
+                <form action="$Env{"CGIHandle"}" method="post" enctype="multipart/form-data" class="Validate PreventMultipleSubmits">
+                    <input type="hidden" name="Action" value="$Env{"Action"}"/>
+                    <input type="hidden" name="Subaction" value="AddPrivate"/>
+                    <fieldset class="TableLike">
+                        <label class="Mandatory" for="File"><span class="Marker">*</span> $Text{"File"}:</label>
+                        <div class="Field">
+                            <input type="file" size="5" name="FileUpload" id="FileUpload" class="Validate_Required $QData{"FileUploadInvalid"}"/>
+                            <div id="FileUploadError" class="TooltipErrorMessage"><p>$Text{"This field is required."}</p></div>
+                            <div id="FileUploadServerError" class="TooltipErrorMessage"><p>$Text{"This field is required."}</p></div>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label for="Secret">$Text{"Secret"}:</label>
+                        <div class="Field">
+                            <input class="W50pc" type="password" name="Secret" id="Secret" value="$QData{"Secret"}" maxlength="50"/>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <div class="Field SpacingTop">
+                            <button class="Primary" type="submit">$Text{"Add"}</button>
+                            $Text{"or"}
+                            <a href="$Env{"Baselink"}Action=$Env{"Action"}">$Text{"Cancel"}</a>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+<!-- dtl:block:OverviewAddPrivate -->
+        </div>
+    </div>
+    <div class="Clear"></div>
+</div>
